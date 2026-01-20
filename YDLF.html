@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Digital Literacy Foundation | A National Education Platform</title>
+    <meta name="description" content="An institutional platform for Youth Digital Literacy Foundation, registered and recognized under the Ministry of Electronics & Information Technology (MeitY), aligned with Digital India.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: "#0a0a0f",
+                        charcoal: "#121218",
+                        midnight: "#0d1b2a",
+                        neonblue: "#00f3ff",
+                        neonviolet: "#9d4edd",
+                        softwhite: "#f0f0f0",
+                        glass: "rgba(255, 255, 255, 0.05)",
+                        glassborder: "rgba(255, 255, 255, 0.1)"
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'display': ['Space Grotesk', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'streak': 'streak 20s linear infinite',
+                        'blur-in': 'blur-in 0.8s ease-out forwards'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 0.7 },
+                            '50%': { opacity: 1 }
+                        },
+                        streak: {
+                            '0%': { transform: 'translateX(-100%) translateY(-100%) rotate(45deg)' },
+                            '100%': { transform: 'translateX(100vw) translateY(100vh) rotate(45deg)' }
+                        },
+                        'blur-in': {
+                            '0%': { filter: 'blur(10px)', opacity: 0 },
+                            '100%': { filter: 'blur(0px)', opacity: 1 }
+                        }
+                    },
+                    backdropBlur: {
+                        'glass': '12px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            overflow-x: hidden;
+        }
+        .gradient-bg {
+            background: radial-gradient(circle at 20% 50%, rgba(13, 27, 42, 0.8) 0%, rgba(10, 10, 15, 1) 70%);
+        }
+        .holographic-gradient {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.1) 0%, rgba(157, 78, 221, 0.1) 50%, rgba(255, 255, 255, 0.05) 100%);
+        }
+        .chip-gradient {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%);
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .light-streak {
+            position: absolute;
+            width: 150%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.6), rgba(157, 78, 221, 0.6), transparent);
+            filter: blur(1px);
+        }
+        .cursor-glow {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.1) 0%, transparent 70%);
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            mix-blend-mode: screen;
+        }
+        .parallax-layer {
+            transition: transform 0.1s linear;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00f3ff, #9d4edd);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease-out;
+        }
+        .section-title.in-view::after {
+            transform: scaleX(1);
+        }
+        .chip-hover {
+            transition: all 0.3s ease;
+        }
+        .chip-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 243, 255, 0.2);
+        }
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #00f3ff, #9d4edd);
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-obsidian text-softwhite font-sans overflow-x-hidden">
+    <div class="scroll-progress"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    
+    <!-- Dynamic Light Streaks -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="light-streak streak-1" style="top: 20%; animation-delay: 0s;"></div>
+        <div class="light-streak streak-2" style="top: 50%; animation-delay: 5s;"></div>
+        <div class="light-streak streak-3" style="top: 80%; animation-delay: 10s;"></div>
+    </div>
+
+    <header class="relative z-50 glassmorphism border-b border-glassborder sticky top-0">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 rounded-full chip-gradient flex items-center justify-center">
+                        <img 
+    src="https://i.imgur.com/oZzdDcA.png"
+    alt="Youth Digital Literacy Foundation Logo"
+    class="w-10 h-10 object-contain rounded-full overflow-hidden"
+/>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-display font-bold tracking-tight">YDLF</h1>
+                        <p class="text-xs text-gray-400">Youth Digital Literacy Foundation</p>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="nav-link text-gray-300 hover:text-neonblue transition-colors duration-300" data-section="about">About</a>
+                    <a href="#credibility" class="nav-link text-gray-300 hover:text-neonblue transition-colors duration-300" data-section="credibility">Credibility</a>
+                    <a href="#framework" class="nav-link text-gray-300 hover:text-neonblue transition-colors duration-300" data-section="framework">Framework</a>
+                    <a href="#focus" class="nav-link text-gray-300 hover:text-neonblue transition-colors duration-300" data-section="focus">YDLF Skillsets</a>
+                   
+                </div>
+                
+                <div class="md:hidden">
+                    <button id="menuToggle" class="text-gray-300 hover:text-neonblue transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden mt-4 pt-4 border-t border-glassborder">
+                <div class="flex flex-col space-y-4">
+                    <a href="#about" class="nav-link text-gray-300 hover:text-neonblue py-2" data-section="about">About YDLF</a>
+                    <a href="#credibility" class="nav-link text-gray-300 hover:text-neonblue py-2" data-section="credibility">Credibility & Recognition</a>
+                    <a href="#framework" class="nav-link text-gray-300 hover:text-neonblue py-2" data-section="framework">Organizational Framework</a>
+                    <a href="#focus" class="nav-link text-gray-300 hover:text-neonblue py-2" data-section="focus">YDLF Skillsets</a>
+                    
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="relative z-10">
+        <!-- Hero Section -->
+        <section class="min-h-screen gradient-bg flex items-center relative overflow-hidden">
+            <div class="container mx-auto px-6 py-20">
+                <div class="max-w-4xl mx-auto text-center">
+                    <div class="mb-8 animate-float">
+                        <div class="w-24 h-24 rounded-full chip-gradient mx-auto flex items-center justify-center mb-6">
+                            <img 
+    src="https://i.imgur.com/oZzdDcA.png"
+    alt="Youth Digital Literacy Foundation Logo"
+    class="w-24 h-24 object-contain rounded-full overflow-hidden"
+/>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-5xl md:text-7xl font-display font-bold mb-6 leading-tight">
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-neonblue to-neonviolet">Youth Digital Literacy</span>
+                        <br>
+                        <span class="text-softwhite">Foundation</span>
+                    </h2>
+                    
+                    <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                        A next-generation national education platform registered under the Ministry of Electronics & Information Technology (MeitY), Government of India.
+                    </p>
+                    
+                    
+                </div>
+            </div>
+            
+            <!-- Animated Orbs -->
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-neonblue opacity-5 blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-neonviolet opacity-5 blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+        </section>
+
+        <!-- About YDLF Section -->
+        <section id="about" class="py-20 relative">
+            <div class="container mx-auto px-6">
+                <div class="max-w-6xl mx-auto">
+                    <h3 class="section-title text-4xl font-display font-bold mb-12">About YDLF</h3>
+                    
+                    <div class="grid md:grid-cols-3 gap-8 mb-16">
+                        <div class="glassmorphism rounded-2xl p-8 hover:border-neonblue transition-all duration-500">
+                            <div class="w-14 h-14 rounded-lg chip-gradient flex items-center justify-center mb-6">
+                                <i class="fas fa-crosshairs text-neonblue text-xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-4">Aim</h4>
+                            <p class="text-gray-300">
+                                To foster essential digital literacy skills among students, enabling them to harness technology effectively, safely, and creatively in a rapidly evolving digital landscape.
+                            </p>
+                        </div>
+                        
+                        <div class="glassmorphism rounded-2xl p-8 hover:border-neonblue transition-all duration-500">
+                            <div class="w-14 h-14 rounded-lg chip-gradient flex items-center justify-center mb-6">
+                                <i class="fas fa-bullseye text-neonviolet text-xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-4">Mission</h4>
+                            <p class="text-gray-300">
+                                Our mission is to equip students with digital skills, creativity, and confidence to thrive in today’s tech-driven world.
+                            </p>
+                        </div>
+                        
+                        <div class="glassmorphism rounded-2xl p-8 hover:border-neonblue transition-all duration-500">
+                            <div class="w-14 h-14 rounded-lg chip-gradient flex items-center justify-center mb-6">
+                                <i class="fas fa-eye text-softwhite text-xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-4">Vision</h4>
+                            <p class="text-gray-300">
+                             Empowering every student to confidently navigate the digital world, unlocking their potential as creators, innovators, and lifelong learners.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Credibility & Recognition Section -->
+        <section id="credibility" class="py-20 relative">
+            <div class="container mx-auto px-6">
+                <div class="max-w-6xl mx-auto">
+                    <h3 class="section-title text-4xl font-display font-bold mb-12">Credibility & Recognition</h3>
+                    
+                    <div class="glassmorphism rounded-2xl p-8 md:p-12 mb-12">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div class="md:w-2/3">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center mr-4">
+                                        <i class="fas fa-shield-alt text-white"></i>
+                                    </div>
+                                    <h4 class="text-2xl font-bold">Government Recognition</h4>
+                                </div>
+                                
+                                <div class="space-y-6">
+                                    <div class="border-l-4 border-neonblue pl-6 py-2">
+                                        <h5 class="text-lg font-semibold mb-2">Registered under MeitY</h5>
+                                        <p class="text-gray-300">
+                                            Youth Digital Literacy Foundation is formally registered and recognized under the Ministry of Electronics & Information Technology (MeitY), Government of India.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="border-l-4 border-neonviolet pl-6 py-2">
+                                        <h5 class="text-lg font-semibold mb-2">Digital India Alignment</h5>
+                                        <p class="text-gray-300">
+                                            Our framework and operational model are architecturally aligned with the Digital India initiative, contributing to the national digital infrastructure.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="border-l-4 border-cyan-400 pl-6 py-2">
+                                        <h5 class="text-lg font-semibold mb-2">National Education Policy 2020</h5>
+                                        <p class="text-gray-300">
+                                            YDLF's curriculum architecture directly supports the implementation of the National Education Policy 2020's emphasis on digital literacy and future-ready skills.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="md:w-1/3 flex justify-center">
+                                <div class="relative">
+                                    <div class="w-64 h-64 rounded-2xl glassmorphism border-2 border-neonblue/30 flex items-center justify-center p-8">
+                                        <div class="text-center">
+                                            <img 
+                src="https://i.imgur.com/RfFBjCP.jpeg"
+                alt="Ministry of Electronics and Information Technology, Government of India"
+                class="w-full h-full object-contain rounded-xl"
+            />
+                                        </div>
+                                    </div>
+                                    <div class="absolute -inset-4 border border-neonblue/20 rounded-3xl -z-10"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Organizational Framework Section -->
+        <section id="framework" class="py-20 relative">
+            <div class="container mx-auto px-6">
+                <div class="max-w-6xl mx-auto">
+                    <h3 class="section-title text-4xl font-display font-bold mb-12">Organizational Framework</h3>
+                    
+                    <div class="glassmorphism rounded-2xl p-8 mb-12">
+                        <div class="mb-10">
+                            <h4 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fas fa-sitemap text-neonblue mr-3"></i>
+                                Founder-Led Governance Structure
+                            </h4>
+                            <p class="text-gray-300 mb-8">
+                                YDLF operates under a clear hierarchical structure with defined departmental responsibilities, ensuring systematic implementation and quality control across all operations.
+                            </p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="chip-hover rounded-xl p-6 border border-glassborder hover:border-neonblue">
+                                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-neonblue to-cyan-500 flex items-center justify-center mb-4">
+                                    <i class="fas fa-crown text-white"></i>
+                                </div>
+                                <h5 class="font-bold mb-2">Founder & Chairman</h5>
+                                <p class="text-sm text-gray-400">Strategic vision and institutional leadership</p>
+                            </div>
+                            
+                            <div class="chip-hover rounded-xl p-6 border border-glassborder hover:border-neonblue">
+                                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-neonviolet to-purple-500 flex items-center justify-center mb-4">
+                                    <i class="fas fa-graduation-cap text-white"></i>
+                                </div>
+                                <h5 class="font-bold mb-2">Curriculum Architects</h5>
+                                <p class="text-sm text-gray-400">Curriculum architecture and pedagogical standards</p>
+                            </div>
+                            
+                            <div class="chip-hover rounded-xl p-6 border border-glassborder hover:border-neonblue">
+                                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center mb-4">
+                                    <i class="fas fa-network-wired text-white"></i>
+                                </div>
+                                <h5 class="font-bold mb-2">School Integration</h5>
+                                <p class="text-sm text-gray-400">Institutional partnerships and implementation</p>
+                            </div>
+                            
+                            <div class="chip-hover rounded-xl p-6 border border-glassborder hover:border-neonblue">
+                                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center mb-4">
+                                    <i class="fas fa-chart-line text-white"></i>
+                                </div>
+                                <h5 class="font-bold mb-2">Quality Assurance</h5>
+                                <p class="text-sm text-gray-400">Monitoring, evaluation, and standards compliance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Educational Focus Areas Section -->
+        <section id="focus" class="py-20 relative">
+            <div class="container mx-auto px-6">
+                <div class="max-w-6xl mx-auto">
+                    <h3 class="section-title text-4xl font-display font-bold mb-12">YDLF Skillsets</h3>
+                    <p class="text-xl text-gray-300 mb-12 max-w-3xl">
+                        Future-ready skill domains presented as modular digital systems or interconnected chips in our educational architecture.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-neonblue relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-neonblue opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fas fa-shield-alt text-neonblue text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Cybersecurity</h4>
+                                <p class="text-gray-300 mb-6">
+                                    This module introduces students to the fundamentals of cybersecurity, including online safety, data protection, password hygiene, cyber threats, and ethical digital behavior. Learners develop awareness of common risks such as phishing, malware, and data breaches, enabling them to navigate the digital world responsibly and securely.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-neonviolet relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-neonviolet opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fa fa-video text-neonviolet text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Video Editing & Content Creation</h4>
+                                <p class="text-gray-300 mb-6">
+                                    Students are trained in the basics of video editing and digital content creation, covering storytelling, editing workflows, visual pacing, and platform-oriented content. The focus is on transforming ideas into impactful digital media while understanding responsible content creation and audience engagement.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-cyan-400 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-400 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fa fa-palette text-cyan-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Graphic Designing & Visual Communication</h4>
+                                <p class="text-gray-300 mb-6">
+                                    This skillset emphasizes design thinking, visual aesthetics, and effective communication through graphics. Students learn the principles of layout, color theory, typography, and branding to convey ideas clearly and creatively across digital platforms and presentations.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-green-400 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-green-400 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fa fa-comment text-green-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Public Speaking & Communication Skills</h4>
+                                <p class="text-gray-300 mb-6">
+                                    This module strengthens verbal communication, confidence, and presentation skills. Students learn articulation, audience engagement, structured speaking, and persuasive communication, preparing them for academic, professional, and leadership environments.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-purple-400 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-400 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fas fa-robot text-purple-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Introduction to AI & Logical Thinking</h4>
+                                <p class="text-gray-300 mb-6">
+                                    This module introduces students to the basic concepts of artificial intelligence alongside logical and structured thinking. Learners explore how AI works at a foundational level while developing reasoning skills that enhance analytical and decision-making abilities.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-red-400 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-red-400 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fas fa-project-diagram text-red-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Digital Literacy & Productivity Tools</h4>
+                                <p class="text-gray-300 mb-6">
+                                    Students gain hands-on exposure to essential digital tools used for productivity, collaboration, and information management. The focus is on efficient use of technology for learning, organization, research, and everyday problem-solving in a digital-first world.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-yellow-400 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-400 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fa fa-lightbulb text-yellow-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Critical Thinking & Problem Solving</h4>
+                                <p class="text-gray-300 mb-6">
+                                    Students are trained to analyze situations, evaluate information, and approach challenges systematically. This skillset encourages independent thinking, logical reasoning, and solution-oriented approaches applicable across academics and real-world scenarios.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chip-hover rounded-2xl p-8 border border-glassborder hover:border-green-400 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-green-400 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 rounded-xl chip-gradient flex items-center justify-center mb-6">
+                                    <i class="fa fa-briefcase text-green-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-xl font-bold mb-4">Entrepreneurship & Financial Basics</h4>
+                                <p class="text-gray-300 mb-6">
+                                    This module familiarizes students with entrepreneurial thinking, basic financial literacy, and economic awareness. Learners understand concepts such as budgeting, value creation, innovation, and responsible financial decision-making, fostering an early mindset for leadership and self-reliance.
+                                </p>
+                                <div class="flex items-center text-yellow-400">
+                                    <span class="text-sm font-medium">Skill Up. Level Up. Power Up.</span>
+                                   
+                                    
+                                </div>
+                                <span class="text-m font-medium">Join YDLF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-50 border-t border-glassborder mt-20">
+        <div class="container mx-auto px-6 py-12">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-8 md:mb-0">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-full chip-gradient flex items-center justify-center">
+                            <img 
+    src="https://i.imgur.com/oZzdDcA.png"
+    alt="Youth Digital Literacy Foundation Logo"
+    class="w-10 h-10 object-contain rounded-full overflow-hidden"
+/>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-display font-bold">YDLF</h3>
+                            <p class="text-sm text-gray-400">Youth Digital Literacy Foundation</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm max-w-md">
+                        A next-generation national education platform registered under MeitY, Government of India. Architecting the future of digital literacy through institutional transformation.
+                    </p>
+                </div>
+                <section id="contact">
+                <div class="text-center md:text-right">
+                    <div class="mb-6">
+                        <h4 class="font-bold mb-3 text-yellow-400">CONTACT US</h4>
+                        
+                    </div>
+                </section> 
+                    <div class="flex space-x-4 justify-center md:justify-end">
+                        <a href="https://www.instagram.com/ydl_foundation?igsh=aHIzYjFvZGF1NWxu" class="w-10 h-10 rounded-full glassmorphism flex items-center justify-center hover:bg-neonblue hover:text-obsidian transition-all">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="tel:+919395513578" class="w-10 h-10 rounded-full glassmorphism flex items-center justify-center hover:bg-neonblue hover:text-obsidian transition-all">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a href="mailto:youthdigitalliteracyfoundation@gmail.com" class="w-10 h-10 rounded-full glassmorphism flex items-center justify-center hover:bg-neonblue hover:text-obsidian transition-all">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-glassborder mt-8 pt-8 text-center">
+                <p class="text-gray-500 text-sm">
+                    © 2026 Youth Digital Literacy Foundation. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Define data at the beginning
+        const sections = [
+            { "id": "about", "title": "About YDLF" },
+            { "id": "credibility", "title": "Credibility & Recognition" },
+            { "id": "framework", "title": "Organizational Framework" },
+            { "id": "focus", "title": "Educational Focus Areas" },
+            { "id": "model", "title": "Operational Model" }
+        ];
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cursor-responsive lighting
+            const cursorGlow = document.getElementById('cursorGlow');
+            document.addEventListener('mousemove', (e) => {
+                cursorGlow.style.left = `${e.clientX - 200}px`;
+                cursorGlow.style.top = `${e.clientY - 200}px`;
+            });
+
+            // Scroll progress indicator
+            const scrollProgress = document.querySelector('.scroll-progress');
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                scrollProgress.style.width = `${scrolled}%`;
+            });
+
+            // Section title animations
+            const sectionTitles = document.querySelectorAll('.section-title');
+            const observerOptions = {
+                threshold: 0.3,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    }
+                });
+            }, observerOptions);
+
+            sectionTitles.forEach(title => observer.observe(title));
+
+            // Parallax effect for light streaks
+            const streaks = document.querySelectorAll('.light-streak');
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                streaks.forEach((streak, index) => {
+                    const rate = 0.5 * (index + 1);
+                    streak.style.transform = `translateX(${scrolled * rate * 0.1}px)`;
+                });
+            });
+
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                menuToggle.innerHTML = mobileMenu.classList.contains('hidden') 
+                    ? '<i class="fas fa-bars text-xl"></i>' 
+                    : '<i class="fas fa-times text-xl"></i>';
+            });
+
+            // Smooth navigation with animation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        // Close mobile menu if open
+                        mobileMenu.classList.add('hidden');
+                        menuToggle.innerHTML = '<i class="fas fa-bars text-xl"></i>';
+                        
+                        // Smooth scroll to section
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Chip hover effects enhancement
+            const chips = document.querySelectorAll('.chip-hover');
+            chips.forEach(chip => {
+                chip.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                });
+                
+                chip.addEventListener('mouseleave', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+
+            // Initialize light streaks animation
+            streaks.forEach((streak, index) => {
+                streak.style.animationDelay = `${index * 5}s`;
+            });
+
+            // Add blur-in animation to main content
+            const mainContent = document.querySelector('main');
+            mainContent.style.animation = 'blur-in 0.8s ease-out forwards';
+        });
+
+        // Prevent default anchor behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
